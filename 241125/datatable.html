@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>DataTable</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- DataTables Bootstrap CSS -->
+    <link href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+</head>
+
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="card-header d-flex justify-content-end gap-2">
+                <button id="addRow" class="btn btn-primary btn-add">
+                    <i class="fas fa-plus me-2"></i>추가
+                </button>
+                <button id="deleteSelected" class="btn btn-danger btn-add">
+                    <i class="fas fa-trash me-2"></i>삭제
+                </button>
+            </div>
+            <div class="card-body">
+                <table id="myTable" class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>이름</th>
+                            <th>회사</th>
+                            <th>직업</th>
+                            <th>나라</th>
+                            <th>이메일</th>
+                            <th>연봉</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th colspan="5" style="text-align:right">총 합계:</th>
+                            <th></th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalContainer"></div>
+
+    <!-- jQuery -->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+    <!-- Dummy Data -->
+    <script src="dummy.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            // 모달 HTML 로드
+            $("#modalContainer").load("modal.html");
+
+            const table = $('#myTable').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/ko.json'
+                },
+                data: dummy,
+                columns: [
+                    { data: 'name' },
+                    { data: 'company' },
+                    { data: 'job' },
+                    { data: 'country' },
+                    { data: 'email' },
+                    {
+                        data: 'salary',
+                        render: (data, type) => type === 'display' ? `$${parseInt(data.replace('$', '')).toLocaleString()}` : data
+                    }
+                ],
+
+                responsive: true,
+                dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>' +
+                    '<"row"<"col-sm-12"tr>>' +
+                    '<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+                lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "전체"]], //드롭다운 선택
+                pageLength: 10,
+                footerCallback: function (row, data, start, end, display) {
+                    const api = this.api();  // DataTables API 인스턴스 가져오기 (footercalback 사용)
+
+                    // 연봉 컬럼(5번째)의 합계 계산
+                    const total = api
+                        .column(5)
+                        .data()
+                        .reduce(function (acc, curr) {
+                            // $ 제거하고 숫자만 추출하여 더하기
+                            var value = curr.replace('$', '');
+                            return acc + parseFloat(value);
+                        }, 0);
+
+                    // 합계를 footer에 표시 ($와 천 단위 구분자 포함)
+                    $(api.column(5).footer()).html('$' + total.toLocaleString());
+
+                }
+            });
+
+            // 행 클릭 이벤트 - 선택/선택해제
+            $('#myTable tbody').on('click', 'tr', e => {
+                $(e.currentTarget).toggleClass('selected');
+            });
+
+            // 행 추가 버튼 클릭 이벤트
+            $('#addRow').on('click', () => {
+                $('#addModal').modal('show');
+            });
+
+            // 선택된 행 삭제 버튼 클릭 이벤트
+            $('#deleteSelected').on('click', () => {
+                const selectedRows = table.rows('.selected').nodes();
+                if (selectedRows.length === 0) {
+                    alert('삭제할 행을 선택해주세요.');
+                    return;
+                }
+
+                if (confirm(`선택한 ${selectedRows.length}개의 행을 삭제하시겠습니까?`)) {
+                    table.rows('.selected').remove().draw();
+                }
+            });
+
+       
+        });
+    </script>
+</body>
+
+</html>
