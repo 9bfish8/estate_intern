@@ -1,0 +1,211 @@
+/* 카드 스타일링 */
+.card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    border: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+.card-header {
+    background-color: #fff;
+    padding: 1rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+/* 테이블 기본 스타일 */
+.table {
+    margin-bottom: 0;
+    width: 100%;
+    background-color: white;
+    border-collapse: collapse;
+}
+
+/* 테이블 헤더 스타일링 */
+.table > thead > tr > th {
+    padding: 1rem;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+    user-select: none;
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+    vertical-align: middle;
+}
+
+/* 테이블 바디 스타일링 */
+.table > tbody > tr > td {
+    padding: 1rem;
+    vertical-align: middle;
+    border-bottom: 1px solid #dee2e6;
+}
+
+/* 테이블 행 스타일링 */
+.table > tbody > tr {
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+/* 기본 호버 효과 */
+.table > tbody > tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* 선택된 행 스타일링 - 전체 행이 파란색 */
+.table > tbody > tr.selected {
+    background-color: #cfe2ff !important;
+}
+
+/* 선택된 행 호버 효과 */
+.table > tbody > tr.selected:hover {
+    background-color: #b6d4fe !important;
+}
+
+/* 테이블 푸터 스타일링 */
+.table > tfoot > tr > td {
+    padding: 1rem;
+    font-weight: 600;
+    background-color: #f8f9fa;
+    border-top: 2px solid #dee2e6;
+}
+
+/* 검색창 스타일링 */
+#searchInput {
+    min-width: 250px;
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+#searchInput:focus {
+    color: #495057;
+    background-color: #fff;
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* 행 개수 선택 드롭다운 스타일링 */
+#rowsPerPage {
+    min-width: 120px;
+    padding: 0.5rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+#rowsPerPage:focus {
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* 페이지네이션 스타일링 */
+.page-numbers {
+    display: flex;
+    gap: 0.25rem;
+    align-items: center;
+    justify-content: center;
+}
+
+.page-numbers button {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: #0d6efd;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    transition: all 0.15s ease-in-out;
+}
+
+.page-numbers button:hover {
+    color: #0d6efd;
+    background-color: #e9ecef;
+    border-color: #dee2e6;
+    z-index: 2;
+}
+
+.page-numbers button.active {
+    color: #fff;
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    z-index: 3;
+}
+
+.page-numbers button:disabled {
+    color: #6c757d;
+    background-color: #fff;
+    border-color: #dee2e6;
+    cursor: not-allowed;
+}
+
+/* 페이지 정보 스타일링 */
+.page-info {
+    color: #6c757d;
+    font-size: 0.875rem;
+}
+
+/* 버튼 그룹 스타일링 */
+.btn-group {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* 모달 스타일링 */
+.modal-content {
+    border-radius: 0.5rem;
+    border: none;
+}
+
+.modal-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+    padding: 1rem;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+.modal-footer {
+    background-color: #f8f9fa;
+    border-top: 1px solid #dee2e6;
+    border-bottom-left-radius: 0.5rem;
+    border-bottom-right-radius: 0.5rem;
+    padding: 1rem;
+}
+
+/* 폼 요소 스타일링 */
+.form-label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+}
+
+.form-control {
+    padding: 0.5rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    color: #495057;
+    background-color: #fff;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+.form-control:focus {
+    color: #495057;
+    background-color: #fff;
+    border-color: #80bdff;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
