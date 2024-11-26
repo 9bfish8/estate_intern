@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>DataTable</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- DataTables Bootstrap CSS -->
+    <link href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <div class="card">
+            <!-- 헤더에 엑셀 버튼 추가 -->
+            <div class="card-header d-flex justify-content-between">
+                <div class="d-flex gap-2">
+                    <!-- 숨겨진 파일 input -->
+                    <input type="file" id="excelFile" accept=".xlsx, .xls" class="d-none">
+                    <!-- 엑셀 가져오기 버튼 -->
+                    <button class="btn btn-success" id="importExcel">
+                        <i class="fas fa-file-import me-2"></i>엑셀 가져오기
+                    </button>
+                    <!-- 엑셀 내보내기 버튼 -->
+                    <button class="btn btn-success" id="exportExcel">
+                        <i class="fas fa-file-export me-2"></i>엑셀 내보내기
+                    </button>
+                </div>
+                <div class="d-flex gap-2">
+                    <button id="addRow" class="btn btn-primary btn-add">
+                        <i class="fas fa-plus me-2"></i>추가
+                    </button>
+                    <button id="deleteSelected" class="btn btn-danger btn-add">
+                        <i class="fas fa-trash me-2"></i>삭제
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <table id="myTable" class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>이름</th>
+                            <th>회사</th>
+                            <th>직업</th>
+                            <th>나라</th>
+                            <th>이메일</th>
+                            <th>연봉</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th colspan="5" style="text-align:right">총 합계:</th>
+                            <th></th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalContainer"></div>
+
+    <!-- jQuery -->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+    <!-- SheetJS 추가 -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+    <!-- Dummy Data -->
+    <script src="dummy.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            // 모달 HTML 로드
+            $("#modalContainer").load("modal.html");
+
+            const table = $('#myTable').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/ko.json'
+                },
+                data: dummy,
+                columns: [
+                    { data: 'name' },
+                    { data: 'company' },
+                    { data: 'job' },
+                    { data: 'country' },
+                    { data: 'email' },
+                    {
+                        data: 'salary',
+                        render: (data, type) => type === 'display' ? `$${parseInt(data.replace('$', '')).toLocaleString()}` : data
+                    }
+                ],
+                responsive: true,
+                dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>' +
+                    '<"row"<"col-sm-12"tr>>' +
+                    '<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+                lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "전체"]],
+                pageLength: 10,
+                footerCallback: function (row, data, start, end, display) {
+                    const api = this.api();
+
+                    const total = api
+                        .column(5)
+                        .data()
+                        .reduce(function (acc, curr) {
+                            var value = curr.replace('$', '');
+                            return acc + parseFloat(value);
+                        }, 0);
+
+                    $(api.column(5).footer()).html('$' + total.toLocaleString());
+                }
+            });
+
+            // 행 클릭 이벤트 - 선택/선택해제
+            $('#myTable tbody').on('click', 'tr', e => {
+                $(e.currentTarget).toggleClass('selected');
+            });
+
+            // 행 추가 버튼 클릭 이벤트
+            $('#addRow').on('click', () => {
+                $('#addModal').modal('show');
+            });
+
+            // 선택된 행 삭제 버튼 클릭 이벤트
+            $('#deleteSelected').on('click', () => {
+                const selectedRows = table.rows('.selected').nodes();
+                if (selectedRows.length === 0) {
+                    alert('삭제할 행을 선택해주세요.');
+                    return;
+                }
+
+                if (confirm(`선택한 ${selectedRows.length}개의 행을 삭제하시겠습니까?`)) {
+                    table.rows('.selected').remove().draw();
+                }
+            });
+
+            // Excel 내보내기 버튼 클릭 이벤트
+            $('#exportExcel').on('click', function () {
+                // 현재 테이블의 모든 데이터 가져오기
+                const data = table.data().toArray();
+
+                // 워크북 생성
+                const wb = XLSX.utils.book_new();
+                // JSON 데이터를 시트로 변환
+                const ws = XLSX.utils.json_to_sheet(data);
+                // 워크북에 시트 추가
+                XLSX.utils.book_append_sheet(wb, ws, "테이블데이터");
+                // 엑셀 파일로 저장
+                XLSX.writeFile(wb, "테이블데이터.xlsx");
+            });
+
+            // Excel 가져오기 버튼 클릭시 파일 선택창 열기
+            $('#importExcel').on('click', function () {
+                $('#excelFile').click();
+            });
+
+            // 파일 선택시 Excel 파일 처리
+            $('#excelFile').on('change', function (e) {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    try {
+                        const data = new Uint8Array(e.target.result);
+                        const workbook = XLSX.read(data, { type: 'array' }); // 'binary' 대신 'array' 사용
+
+                        // 첫 번째 시트 데이터 가져오기
+                        const firstSheetName = workbook.SheetNames[0];
+                        const worksheet = workbook.Sheets[firstSheetName];
+
+                        // 시트 데이터를 JSON으로 변환 (헤더 포함)
+                        const jsonData = XLSX.utils.sheet_to_json(worksheet, {
+                            header: ['name', 'company', 'job', 'country', 'email', 'salary'],  // 헤더 지정
+                            range: 1  // 첫 번째 줄(헤더) 건너뛰기
+                        });
+
+                        // 데이터 형식 맞추기
+                        const formattedData = jsonData.map(row => ({
+                            ...row,
+                            salary: row.salary ? `$${row.salary}` : '$0' // salary 필드에 $ 추가
+                        }));
+
+                        // 테이블 갱신
+                        const table = $('#myTable').DataTable();
+                        table.clear();
+                        table.rows.add(formattedData).draw();
+
+                        // 파일 입력 초기화
+                        $('#excelFile').val('');
+
+                    } catch (error) {
+                        console.error('Excel 파일 처리 중 오류:', error);
+                        alert('Excel 파일 처리 중 오류가 발생했습니다.');
+                    }
+                };
+
+                reader.onerror = function (error) {
+                    console.error('파일 읽기 오류:', error);
+                    alert('파일을 읽는 중 오류가 발생했습니다.');
+                };
+
+                // 파일을 ArrayBuffer로 읽기
+                reader.readAsArrayBuffer(file);
+            });
+        });
+    </script>
+</body>
+
+</html>

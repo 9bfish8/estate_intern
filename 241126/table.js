@@ -14,7 +14,6 @@ class CustomDataTable {
     this.init();
   }
 
-
   // 초기화, 이벤트 설정 및 테이블 렌더링
   init() {
     this.setupEventListeners();
@@ -47,19 +46,19 @@ class CustomDataTable {
     });
 
     // 행 클릭시 선택/해제
-   this.table.querySelector("tbody").addEventListener("click", (e) => {
-    const tr = e.target.closest("tr");
-    if (tr) {
-      const index = parseInt(tr.dataset.index);
-      if (this.selectedRows.has(index)) {
-        this.selectedRows.delete(index);
-        tr.classList.remove("selected");
-      } else {
-        this.selectedRows.add(index);
-        tr.classList.add("selected");
+    this.table.querySelector("tbody").addEventListener("click", (e) => {
+      const tr = e.target.closest("tr");
+      if (tr) {
+        const index = parseInt(tr.dataset.index);
+        if (this.selectedRows.has(index)) {
+          this.selectedRows.delete(index);
+          tr.classList.remove("selected");
+        } else {
+          this.selectedRows.add(index);
+          tr.classList.add("selected");
+        }
       }
-    }
-  });
+    });
 
     // 추가 버튼 클릭시 모달 표시
     document.getElementById("addBtn").addEventListener("click", () => {
@@ -89,20 +88,17 @@ class CustomDataTable {
 
     this.updateSortIcons(column);
 
-
     // 데이터 정렬
     this.data.sort((a, b) => {
       let aVal = a[column];
       let bVal = b[column];
 
-
-        // 연봉 컬럼은 숫자로 변환해서 정렬
+      // 연봉 컬럼은 숫자로 변환해서 정렬
       if (column === "salary") {
         aVal = parseInt(aVal.replace(/[$,]/g, ""));
         bVal = parseInt(bVal.replace(/[$,]/g, ""));
         return this.sortDirection === "asc" ? aVal - bVal : bVal - aVal;
       }
-
 
       // 문자열 비교
       return this.sortDirection === "asc"
@@ -127,7 +123,6 @@ class CustomDataTable {
     });
   }
 
-
   // 검색 처리
   handleSearch() {
     const searchTerm = this.searchTerm.toLowerCase();
@@ -135,7 +130,7 @@ class CustomDataTable {
     if (searchTerm === "") {
       this.data = [...this.originalData]; // 검색어가 없으면 원래 데이터 로드
     } else {
-        // 검색어로 필터링
+      // 검색어로 필터링
       this.data = this.originalData.filter((row) => {
         return Object.values(row).some((value) => {
           const strValue = value.toString().toLowerCase();
@@ -169,25 +164,24 @@ class CustomDataTable {
   }
 
   // 테이블 렌더링
-
   renderTable() {
-    const tbody = this.table.querySelector('tbody');
-    tbody.innerHTML = '';
+    const tbody = this.table.querySelector("tbody");
+    tbody.innerHTML = "";
 
     const start = (this.currentPage - 1) * this.rowsPerPage;
-    const end = this.rowsPerPage === -1 ? this.data.length : start + this.rowsPerPage;
+    const end =
+      this.rowsPerPage === -1 ? this.data.length : start + this.rowsPerPage;
     const paginatedData = this.data.slice(start, end);
 
     paginatedData.forEach((row, index) => {
-      const tr = document.createElement('tr');
+      const tr = document.createElement("tr");
       const dataIndex = start + index;
       tr.dataset.index = dataIndex;
-      
+
       // 선택된 행 표시
       if (this.selectedRows.has(dataIndex)) {
-        tr.classList.add('selected');
+        tr.classList.add("selected");
       }
-
 
       // 행 내용
       tr.innerHTML = `
@@ -304,15 +298,15 @@ class CustomDataTable {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    // 행클릭시 스타일 충돌로 인해 넣었습니다
-    const style = document.createElement('style');
-    style.textContent = `
+  // 행클릭시 스타일 충돌로 인해 넣었습니다
+  const style = document.createElement("style");
+  style.textContent = `
         .table > tbody > tr.selected { 
             background-color: #cfe2ff !important;
             border-left: 4px solid #0d6efd !important;
         }
     `;
-    document.head.appendChild(style);
+  document.head.appendChild(style);
 
-    window.dataTable = new CustomDataTable("dataTable", dummy);
+  window.dataTable = new CustomDataTable("dataTable", dummy);
 });
