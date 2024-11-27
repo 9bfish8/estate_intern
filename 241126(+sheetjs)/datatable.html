@@ -171,7 +171,7 @@
                 reader.onload = function (e) {
                     try {
                         const data = new Uint8Array(e.target.result);
-                        const workbook = XLSX.read(data, { type: 'array' }); // 'binary' 대신 'array' 사용
+                        const workbook = XLSX.read(data, { type: 'array' });
 
                         // 첫 번째 시트 데이터 가져오기
                         const firstSheetName = workbook.SheetNames[0];
