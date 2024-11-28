@@ -43,19 +43,17 @@
     transition: all 0.2s ease-in-out;
 }
 
-/* 기본 호버 효과 */
-.table > tbody > tr:hover {
-    background-color: #f8f9fa;
-}
-
-/* 선택된 행 스타일링 - 전체 행이 파란색 */
+/* 선택된 행 스타일링 */
 .table > tbody > tr.selected {
     background-color: #cfe2ff !important;
 }
 
-/* 선택된 행 호버 효과 */
 .table > tbody > tr.selected:hover {
     background-color: #b6d4fe !important;
+}
+
+.table > tbody > tr.selected td:first-child {
+    border-left: 4px solid #0d6efd;
 }
 
 /* 테이블 푸터 스타일링 */
@@ -66,30 +64,8 @@
     border-top: 2px solid #dee2e6;
 }
 
-/* 검색창 스타일링 */
-#searchInput {
-    min-width: 250px;
-    padding: 0.5rem 1rem;
-    font-size: 0.875rem;
-    line-height: 1.5;
-    color: #495057;
-    background-color: #fff;
-    border: 1px solid #ced4da;
-    border-radius: 0.25rem;
-    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-}
-
-#searchInput:focus {
-    color: #495057;
-    background-color: #fff;
-    border-color: #80bdff;
-    outline: 0;
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-}
-
-/* 행 개수 선택 드롭다운 스타일링 */
-#rowsPerPage {
-    min-width: 120px;
+/* 폼 컨트롤 공통 스타일 */
+.form-control, #searchInput, #rowsPerPage {
     padding: 0.5rem;
     font-size: 0.875rem;
     line-height: 1.5;
@@ -100,10 +76,22 @@
     transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
-#rowsPerPage:focus {
+.form-control:focus, #searchInput:focus, #rowsPerPage:focus {
+    color: #495057;
+    background-color: #fff;
     border-color: #80bdff;
     outline: 0;
     box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* 검색창 특정 스타일 */
+#searchInput {
+    min-width: 250px;
+}
+
+/* 행 개수 선택 드롭다운 특정 스타일 */
+#rowsPerPage {
+    min-width: 120px;
 }
 
 /* 페이지네이션 스타일링 */
@@ -114,37 +102,29 @@
     justify-content: center;
 }
 
-.page-numbers button {
-    padding: 0.375rem 0.75rem;
-    font-size: 0.875rem;
-    line-height: 1.5;
-    color: #0d6efd;
-    background-color: #fff;
+/* 페이지네이션 버튼 공통 스타일 */
+.page-numbers button, .pagination-btn {
+    margin: 0 5px;
+    padding: 5px 15px;
     border: 1px solid #dee2e6;
-    border-radius: 0.25rem;
+    background-color: #fff;
     cursor: pointer;
-    transition: all 0.15s ease-in-out;
 }
 
 .page-numbers button:hover {
     color: #0d6efd;
     background-color: #e9ecef;
-    border-color: #dee2e6;
-    z-index: 2;
 }
 
-.page-numbers button.active {
-    color: #fff;
+.page-numbers button.active, .pagination-btn.active {
     background-color: #0d6efd;
+    color: #fff;
     border-color: #0d6efd;
-    z-index: 3;
 }
 
-.page-numbers button:disabled {
-    color: #6c757d;
-    background-color: #fff;
-    border-color: #dee2e6;
+.page-numbers button:disabled, .pagination-btn:disabled {
     cursor: not-allowed;
+    opacity: 0.5;
 }
 
 /* 페이지 정보 스타일링 */
@@ -185,27 +165,8 @@
     padding: 1rem;
 }
 
-/* 폼 요소 스타일링 */
+/* 폼 라벨 스타일링 */
 .form-label {
     font-weight: 500;
     margin-bottom: 0.5rem;
-}
-
-.form-control {
-    padding: 0.5rem;
-    font-size: 0.875rem;
-    line-height: 1.5;
-    color: #495057;
-    background-color: #fff;
-    border: 1px solid #ced4da;
-    border-radius: 0.25rem;
-    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-}
-
-.form-control:focus {
-    color: #495057;
-    background-color: #fff;
-    border-color: #80bdff;
-    outline: 0;
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
