@@ -1,0 +1,42 @@
+<div class="modal fade" id="addModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">새 데이터 추가</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addForm">
+                    <div class="mb-3">
+                        <label class="form-label">이름</label>
+                        <input type="text" class="form-control" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">회사</label>
+                        <input type="text" class="form-control" name="company" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">직업</label>
+                        <input type="text" class="form-control" name="job" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">나라</label>
+                        <input type="text" class="form-control" name="country" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">이메일</label>
+                        <input type="email" class="form-control" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">연봉</label>
+                        <input type="text" class="form-control" name="salary" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                <button type="button" class="btn btn-primary" id="saveData">저장</button>
+            </div>
+        </div>
+    </div>
+</div>

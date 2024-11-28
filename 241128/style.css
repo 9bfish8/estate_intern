@@ -1,0 +1,78 @@
+.container {
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+.card {
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    border-bottom: none;
+    padding: 20px;
+}
+
+.btn-add {
+    border-radius: 20px;
+    padding: 8px 20px;
+}
+
+.table thead th {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.delete-btn {
+    padding: 5px 10px;
+    border-radius: 15px;
+}
+
+.dataTables_wrapper {
+    padding: 20px;
+}
+
+/* 테이블 헤더 스타일 */
+.table thead th {
+    font-weight: 600;
+    color: #495057;
+}
+
+/* 테이블 행 호버 효과 */
+.table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* 페이지네이션 버튼 스타일 */
+.page-link {
+    color: #0d6efd;
+    border-radius: 5px;
+    margin: 0 2px;
+}
+
+/* 검색 입력창 스타일 */
+.dataTables_filter input {
+    border-radius: 20px;
+    border: 1px solid #dee2e6;
+    padding: 5px 10px;
+}
+
+.selected {
+    background-color: #e2e6ea !important;
+}
+#myTable tbody tr {
+    cursor: pointer;
+}
+
+.selected {
+    background-color: #cfe2ff !important;
+}
+
+.selected:hover {
+    background-color: #b6d4fe !important;
+}
+
+.chart-container {
+    max-width: 500px;
+    margin: 0 auto;
+}

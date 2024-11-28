@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>DataTable</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- DataTables Bootstrap CSS -->
+    <link href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+</head>
+
+<body>
+    <div class="container mt-4">
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-end gap-2">
+                <button id="editRow" class="btn btn-warning btn-edit">
+                    <i class="fas fa-edit me-2"></i>수정
+                </button>
+                <button id="addRow" class="btn btn-primary btn-add">
+                    <i class="fas fa-plus me-2"></i>추가
+                </button>
+                <button id="deleteSelected" class="btn btn-danger btn-add">
+                    <i class="fas fa-trash me-2"></i>삭제
+                </button>
+            </div>
+            <div class="card-body">
+                <table id="myTable" class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>이름</th>
+                            <th>회사</th>
+                            <th>직업</th>
+                            <th>나라</th>
+                            <th>이메일</th>
+                            <th>연봉</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th colspan="5" style="text-align:right">총 합계:</th>
+                            <th></th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+        <div class="row">
+
+            <div class="card mb-4 col-md-6 mx-auto">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">국가별 직원 수 Top3</h5>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container">
+                        <canvas id="countryChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">국가별 평균 연봉 Top3</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="salaryChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="dummy.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            let editingRow = null;
+            let countryChart = null;
+            let salaryChart = null;
+
+            // 국가별 직원수와 평균 연봉 계산 함수
+            function getTop3CountryStats(data) {
+                const stats = data.reduce((acc, curr) => {
+                    const country = curr.country;
+                    if (!acc[country]) {
+                        acc[country] = {
+                            count: 0,
+                            totalSalary: 0
+                        };
+                    }
+                    acc[country].count++;
+                    acc[country].totalSalary += parseFloat(curr.salary.replace('$', '').replace(',', ''));
+                    return acc;
+                }, {});
+
+                // 평균 연봉 계산
+                Object.keys(stats).forEach(country => {
+                    stats[country].avgSalary = stats[country].totalSalary / stats[country].count;
+                });
+
+                // count 기준 top3 국가 추출하고
+
+                const getTop3Countries = Object.entries(stats)
+                    .sort((a, b) => b[1].count - a[1].count)
+                    .slice(0, 3);
+
+                // return값으로 countrydata .... countries counts avg ....?를 주고
+
+                return {
+                    countries: top3Countries.map(([country]) => country),
+                    counts: top3Countries.map(([, data]) => data.count),
+                    avgSalaries: top3Countries.map(([, data]) => data.avgSalary)
+
+                }
+
+                //  차트업데이트를 해야함
+
+                function updateChart() {
+                    const data = table.data().toArray();
+                    const stats = getTop3CountryStats(Data);
+
+                    // 그리고 기존차트를 제거함 
+                    // 만약에 countryChart랑 salaryChart가 있으면 그래프초기화
+
+
+                    if (countryChart) countryChart.destroy();
+                    if (salaryChart) salaryChart.destroy();
+
+                    // 그리고 직원수 파이차트가 와야함
+
+
+                    const ctx = document.getElementById('countryChart').getContext('2d');
+                    countryChart = new Chart(ctx, {
+                        type: 'pie',
+                        data: {
+                            labels: top3.map(country => country[0]),
+                            datasets: [{
+                                label: '직원 수',
+                                data: top3.map(country => country[1]),
+                                backgroundColor: [
+                                    'rgba(255, 99, 132, 0.7)',
+                                    'rgba(54, 162, 235, 0.7)',
+                                    'rgba(255, 206, 86, 0.7)'
+                                ],
+                                borderColor: [
+                                    'rgba(255, 99, 132, 1)',
+                                    'rgba(54, 162, 235, 1)',
+                                    'rgba(255, 206, 86, 1)'
+                                ],
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: {
+                                    position: 'top',
+                                },
+                                title: {
+                                    display: true,
+                                    text: '국가별 직원수 Top3'
+                                }
+                            }
+                        }
+                    });
+
+
+
+                    //평균 연봉 바 차트를 만들면 아마도 될것같음... 근데 왜 안뜨지...
+
+                    const barCtx = document.getElementById('salaryChart').getContext('2d');
+                    salaryChart = new Chart(barCtx, {
+                        type: 'bar',
+                        data: {
+                            labels: stats.countries,
+                            datasets: [{
+                                label: '평균 연봉',
+                                data: stats.avgSalaries,
+                                backgroundColor: 'rgba(75, 192, 192, 0.7)',
+                                borderColor: 'rgba(75, 192, 192, 1)',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: {
+                                    position: 'top',
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        callback: function (value) {
+                                            return '$' + value.toLocaleString();
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+
+
+
+            const table = $('#myTable').DataTable({
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.7/i18n/ko.json'
+                },
+                data: dummy,
+                columns: [
+                    { data: 'name' },
+                    { data: 'company' },
+                    { data: 'job' },
+                    { data: 'country' },
+                    { data: 'email' },
+                    {
+                        data: 'salary',
+                        render: (data, type) => type === 'display' ?
+                            `$${parseInt(data.replace('$', '')).toLocaleString()}` : data
+                    }
+                ],
+                responsive: true,
+                dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>' +
+                    '<"row"<"col-sm-12"tr>>' +
+                    '<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
+                lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "전체"]],
+                pageLength: 10,
+                footerCallback: function (row, data, start, end, display) {
+                    const api = this.api();
+                    const total = api
+                        .column(5)
+                        .data()
+                        .reduce(function (acc, curr) {
+                            var value = curr.replace('$', '');
+                            return acc + parseFloat(value);
+                        }, 0);
+
+                    $(api.column(5).footer()).html('$' + total.toLocaleString());
+                }
+            });
+
+            // 초기 차트 생성
+            updateChart();
+
+            // 행 클릭 이벤트
+            $('#myTable tbody').on('click', 'tr', e => {
+                $(e.currentTarget).toggleClass('selected');
+            });
+
+            // 수정 버튼 클릭 이벤트
+            $('#editRow').on('click', () => {
+                const selectedRows = table.rows('.selected').nodes();
+                if (selectedRows.length !== 1) {
+                    alert('수정할 행을 하나만 선택해주세요.');
+                    return;
+                }
+
+                editingRow = table.row('.selected');
+                const rowData = editingRow.data();
+
+                $('.modal-title').text('데이터 수정');
+                const form = $('#addForm');
+                form.find('input[name="name"]').val(rowData.name);
+                form.find('input[name="company"]').val(rowData.company);
+                form.find('input[name="job"]').val(rowData.job);
+                form.find('input[name="country"]').val(rowData.country);
+                form.find('input[name="email"]').val(rowData.email);
+                form.find('input[name="salary"]').val(rowData.salary.replace('$', ''));
+
+                $('#addModal').modal('show');
+            });
+
+            // 행 추가 버튼 클릭 이벤트
+            $('#addRow').on('click', () => {
+                editingRow = null;
+                $('.modal-title').text('새 데이터 추가');
+                $('#addForm')[0].reset();
+                $('#addModal').modal('show');
+            });
+
+            // 저장 버튼 클릭 이벤트
+            $('#saveData').on('click', function () {
+                const form = $('#addForm');
+                const formData = form.serializeArray().reduce((acc, { name, value }) => {
+                    acc[name] = value;
+                    return acc;
+                }, {});
+                formData.salary = '$' + formData.salary;
+
+                if (editingRow) {
+                    editingRow.data(formData).draw();
+                    editingRow = null;
+                } else {
+                    table.row.add(formData).draw();
+                }
+
+                $('#addModal').modal('hide');
+                form[0].reset();
+                updateChart();
+            });
+
+            // 삭제 버튼 클릭 이벤트
+            $('#deleteSelected').on('click', () => {
+                const selectedRows = table.rows('.selected').nodes();
+                if (selectedRows.length === 0) {
+                    alert('삭제할 행을 선택해주세요.');
+                    return;
+                }
+
+                if (confirm(`선택한 ${selectedRows.length}개의 행을 삭제하시겠습니까?`)) {
+                    table.rows('.selected').remove().draw();
+                    updateChart();
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
