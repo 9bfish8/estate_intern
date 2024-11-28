@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <title>DataTable</title>
     <!-- Bootstrap CSS -->
@@ -9,13 +8,14 @@
     <link href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-
 </head>
-
 <body>
     <div class="container">
         <div class="card">
             <div class="card-header d-flex justify-content-end gap-2">
+                <button id="editRow" class="btn btn-warning btn-edit">
+                    <i class="fas fa-edit me-2"></i>수정
+                </button>
                 <button id="addRow" class="btn btn-primary btn-add">
                     <i class="fas fa-plus me-2"></i>추가
                 </button>
@@ -62,8 +62,31 @@
 
     <script>
         $(document).ready(function () {
+            let editingRow = null;
+            
             // 모달 HTML 로드
-            $("#modalContainer").load("modal.html");
+            $("#modalContainer").load("modal.html", function() {
+                $('#saveData').on('click', function() {
+                    const form = $('#addForm');
+                    const formData = form.serializeArray().reduce((acc, { name, value }) => {
+                        acc[name] = value;
+                        return acc;
+                    }, {});
+                    formData.salary = '$' + formData.salary;
+
+                    if (editingRow) {
+                        // 수정 모드
+                        editingRow.data(formData).draw();
+                        editingRow = null;
+                    } else {
+                        // 추가 모드
+                        table.row.add(formData).draw();
+                    }
+
+                    $('#addModal').modal('hide');
+                    form[0].reset();
+                });
+            });
 
             const table = $('#myTable').DataTable({
                 language: {
@@ -81,29 +104,24 @@
                         render: (data, type) => type === 'display' ? `$${parseInt(data.replace('$', '')).toLocaleString()}` : data
                     }
                 ],
-
                 responsive: true,
                 dom: '<"row"<"col-sm-12 col-md-6"l><"col-sm-12 col-md-6"f>>' +
                     '<"row"<"col-sm-12"tr>>' +
                     '<"row"<"col-sm-12 col-md-5"i><"col-sm-12 col-md-7"p>>',
-                lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "전체"]], //드롭다운 선택
+                lengthMenu: [[5, 10, 25, 50, -1], [5, 10, 25, 50, "전체"]],
                 pageLength: 10,
                 footerCallback: function (row, data, start, end, display) {
-                    const api = this.api();  // DataTables API 인스턴스 가져오기 (footercalback 사용)
+                    const api = this.api();
 
-                    // 연봉 컬럼(5번째)의 합계 계산
                     const total = api
                         .column(5)
                         .data()
                         .reduce(function (acc, curr) {
-                            // $ 제거하고 숫자만 추출하여 더하기
                             var value = curr.replace('$', '');
                             return acc + parseFloat(value);
                         }, 0);
 
-                    // 합계를 footer에 표시 ($와 천 단위 구분자 포함)
                     $(api.column(5).footer()).html('$' + total.toLocaleString());
-
                 }
             });
 
@@ -112,8 +130,37 @@
                 $(e.currentTarget).toggleClass('selected');
             });
 
+            // 수정 버튼 클릭 이벤트
+            $('#editRow').on('click', () => {
+                const selectedRows = table.rows('.selected').nodes();
+                if (selectedRows.length !== 1) {
+                    alert('수정할 행을 하나만 선택해주세요.');
+                    return;
+                }
+
+                editingRow = table.row('.selected');
+                const rowData = editingRow.data();
+
+                // 모달 제목 변경
+                $('.modal-title').text('데이터 수정');
+
+                // 폼에 데이터 채우기
+                const form = $('#addForm');
+                form.find('input[name="name"]').val(rowData.name);
+                form.find('input[name="company"]').val(rowData.company);
+                form.find('input[name="job"]').val(rowData.job);
+                form.find('input[name="country"]').val(rowData.country);
+                form.find('input[name="email"]').val(rowData.email);
+                form.find('input[name="salary"]').val(rowData.salary.replace('$', ''));
+
+                $('#addModal').modal('show');
+            });
+
             // 행 추가 버튼 클릭 이벤트
             $('#addRow').on('click', () => {
+                editingRow = null;
+                $('.modal-title').text('새 데이터 추가');
+                $('#addForm')[0].reset();
                 $('#addModal').modal('show');
             });
 
@@ -129,10 +176,7 @@
                     table.rows('.selected').remove().draw();
                 }
             });
-
-       
         });
     </script>
 </body>
-
 </html>

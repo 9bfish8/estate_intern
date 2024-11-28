@@ -40,29 +40,3 @@
         </div>
     </div>
 </div>
-
-<script>
-    $('#saveData').on('click', () => {
-        const form = $('#addForm');
-        const table = $('#myTable').DataTable();
-
-        // 폼 데이터 수집
-        const formData = form.serializeArray().reduce((acc, { name, value }) => {
-            acc[name] = value;
-            return acc;
-        }, {});
-        formData.salary = '$' + formData.salary;
-
-        // 데이터 전달 및 모달 처리
-        $(document).trigger('add.data', [formData]);
-        $('#addModal').modal('hide');
-
-        // 데이터 추가 이벤트
-        
-            table.row.add(formData).draw();
-            console.log("🚀 ~ $ ~ table:", table)
-        
-        form[0].reset();
-    });
-            
-</script>
