@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/css/jquery.dataTables.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/js/jquery.dataTables.min.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <h1>비동기 데이터 테이블</h1>
+        <table id="employeeTable" class="display">
+            <thead>
+                <tr>
+                    <th>이름</th>
+                    <th>회사</th>
+                    <th>직책</th>
+                    <th>국가</th>
+                    <th>이메일</th>
+                    <th>연봉</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+
+    <script>
+        // 데이터 불러오는 함수
+        async function loadEmployeeData() {
+            // 예외처리부터 시작 :  !response.ok = 데이터로딩 실패
+            try {
+                const response = await fetch('dummy.json');
+                if (!response.ok) {
+                    throw new Error('데이터 로딩 실패!');
+                }
+                return await response.json();
+            } catch (error) {
+                console.error('Error', error);
+                throw error;
+            }
+        }
+ 
+        //테이블을 초기화 하는 함수필요
+        async function initializeTable() {
+            try { // 데이터 로드
+                const data = await loadEmployeeData();
+
+                //datatable 초기화
+                $('#employeeTable').DataTable({
+                    data: data,
+                    columns: [
+                        { data: 'name' },
+                        { data: 'company' },
+                        { data: 'job' },
+                        { data: 'country' },
+                        { data: 'email' },
+                        {
+                            data: 'salary',
+                            render: data => '$' + Number(data.replace('$', '')).toLocaleString()
+                        }
+                    ],
+                    language: {
+                        search: "검색:",
+                        lengthMenu: "_MENU_ 개씩 보기",
+                        info: "_START_ - _END_ / _TOTAL_",
+                        infoEmpty: "데이터 없음",
+                        infoFiltered: "(전체 _MAX_ 개 중 검색결과)",
+                        paginate: {
+                            first: "처음",
+                            last: "마지막",
+                            next: "다음",
+                            previous: "이전"
+                        }
+                    },
+                    processing: true,
+                    serverSide: false,
+                    pageLength: 10
+                });
+
+            } catch (error) {
+                console.error('테이블 초기화 실패ㅠㅠ:', error);
+                document.querySelector('.container').innerHTML +=`
+                <div class="error">데이터를 불러오는데 실패했습니다.</div>`;
+            }
+        }
+
+        // 페이지 로드시 실행되면 될것같음
+        document.addEventListener('DOMContentLoaded', initializeTable);
+
+       
+    </script>
+</body>
+
+</html>
