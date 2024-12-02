@@ -255,11 +255,11 @@ function exportToExcel() {
             
             // 열 너비 설정
             const columnWidths = [
-                { wch: 20 }, // 이름
-                { wch: 15 }, // 회사
-                { wch: 20 }, // 직무
-                { wch: 15 }, // 국가
-                { wch: 15 }  // 급여
+                { wch: 20 }, 
+                { wch: 15 }, 
+                { wch: 20 }, 
+                { wch: 15 }, 
+                { wch: 15 }  
             ];
             ws['!cols'] = columnWidths;
 
