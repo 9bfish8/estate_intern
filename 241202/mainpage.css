@@ -1,0 +1,269 @@
+:root {
+    --primary-bg: #f8f9fa;
+    --sidebar-bg: white;
+    --card-shadow: 0 0.25rem 0.75rem rgba(0, 0, 0, 0.05);
+    --primary-color: #3a416f;
+    --success-color: #2dce89;
+    --warning-color: #fb6340;
+    --info-color: #11cdef;
+}
+
+body {
+    background-color: var(--primary-bg);
+    font-family: 'Noto Sans KR', sans-serif;
+}
+
+/* 사이드바 */
+#sidebar {
+    min-width: 250px;
+    max-width: 250px;
+    min-height: 100vh;
+    transition: all 0.3s ease;  
+    background: var(--sidebar-bg);
+    border-right: 1px solid #eee;
+    position: relative;  
+    margin-left: 0;  
+}
+
+#sidebar.active {
+    margin-left: -250px;
+    transform: translateX(-100%);  
+}
+
+/* 콘텐츠 영역도 수정 */
+#content {
+    width: 100%;
+    padding: 20px;
+    min-height: 100vh;
+    transition: all 0.3s;
+    position: relative;  
+}
+
+/* wrapper도 수정 */
+.wrapper {
+    display: flex;
+    width: 100%;
+    position: relative;  
+    overflow-x: hidden; 
+}
+
+#sidebar .sidebar-header {
+    padding: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+#sidebar .sidebar-header h3 {
+    color: #344767; 
+    font-size: 1.2rem;
+    margin: 0;
+    font-weight: 600;
+}
+
+#sidebar ul li a {
+    padding: 12px 20px;
+    font-size: 1rem;
+    display: block;
+    color: #6c757d;
+    text-decoration: none;
+    transition: all 0.3s;
+    border-radius: 5px;
+    margin: 4px 10px;
+}
+
+#sidebar ul li a:hover,
+#sidebar ul li.active a {
+    background: #f8f9fa;
+    color: var(--primary-color);
+}
+
+/* 내용 */
+#content {
+    width: 100%;
+    padding: 20px;
+    min-height: 100vh;
+    transition: all 0.3s;
+}
+
+/* 네브바 */
+.navbar {
+    background: white;
+    border-radius: 10px;
+    margin-bottom: 25px;
+    padding: 10px 20px;
+    box-shadow: var(--card-shadow);
+}
+
+.current-time {
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+/* 카드 */
+.card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: var(--card-shadow);
+    margin-bottom: 20px;
+    background: white;
+}
+
+.dashboard-card {
+    transition: all 0.3s ease;
+}
+
+.dashboard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.1);
+}
+
+.card-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card-icon i {
+    color: white;
+    font-size: 1.5rem;
+}
+
+.card-subtitle {
+    color: #6c757d;
+    font-size: 0.875rem;
+}
+
+.card-title {
+    color: var(--primary-color);
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+/* 차트 컨테이너 */
+.chart-container {
+    position: relative;
+    height: 300px;
+    margin: 10px 0;
+}
+
+canvas {
+    max-width: 100%;
+    height: 100% !important;
+}
+
+/* 통계 카드 */
+.stats-list {
+    padding: 20px 0;
+}
+
+.stat-item {
+    padding: 15px 0;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.stat-item:last-child {
+    border-bottom: none;
+}
+
+.stat-value {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+/* 배경 색상 */
+.bg-primary {
+    background: var(--primary-color) !important;
+}
+
+.bg-success {
+    background: var(--success-color) !important;
+}
+
+.bg-warning {
+    background: var(--warning-color) !important;
+}
+
+.bg-info {
+    background: var(--info-color) !important;
+}
+
+/* UI 요소 */
+.btn-primary {
+    background: var(--primary-color);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 7px;
+    transition: all 0.3s;
+}
+
+.btn-primary:hover {
+    background: #2c3154;
+    transform: translateY(-1px);
+}
+
+.text-success {
+    color: var(--success-color) !important;
+}
+
+.text-danger {
+    color: #f5365c !important;
+}
+
+.text-muted {
+    color: #8898aa !important;
+}
+
+/* 애니메이션 */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card {
+    animation: fadeIn 0.5s ease-out;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+    #sidebar {
+        margin-left: -250px;
+    }
+    #sidebar.active {
+        margin-left: 0;
+    }
+    #content {
+        padding: 15px;
+    }
+    .chart-container {
+        height: 250px;
+    }
+}
+
+/* 스크롤바 */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
